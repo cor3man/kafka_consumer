@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:7.0
+    container_name: my_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - redis_network
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      KAFKA_BROKER: kafka:9093
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    networks:
+      - redis_network
+      - kafka_network
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+
+networks:
+  redis_network:
+  kafka_network:
+    external: true
