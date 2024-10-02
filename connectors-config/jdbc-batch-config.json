@@ -1,0 +1,18 @@
+{
+  "name": "jdbc-avg-transactions-connector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:postgresql://postgres:5432/mydb",
+    "connection.user": "postgres",
+    "connection.password": "your_password",
+    "mode": "bulk",
+    "poll.interval.ms": 10000,
+    "query": "SELECT public.transaction.client_id, AVG(price) AS avg_price FROM transaction WHERE created_at >= DATE_TRUNC('day', NOW() - INTERVAL '1 day')   AND created_at < DATE_TRUNC('day', NOW()) GROUP BY client_id;",
+    "topic.prefix": "avg-transactions",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter.schemas.enable": "false"
+  }
+}
